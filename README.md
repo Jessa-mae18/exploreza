@@ -1,35 +1,86 @@
-# Exploreza – Travel & Tour Guide Booking System (PHP + MySQL)
+# Exploreza – Travel and Tour Guide Booking System
 
-## Run it (XAMPP)
-1. Copy this folder to `C:\xampp\htdocs\exploreza`. Start Apache and MySQL.
-2. phpMyAdmin > Import > `database/schema.sql` (first time only).
-3. Existing database? Also import `database/update_photos.sql` once (adds photo columns).
-4. Open http://localhost/exploreza/
-Admin login: `admin` / `Admin_123`.
+## About the system
 
-## Structure
-- `index.php` landing page
-- `auth/` login, register, verify, logout
-- `customer/` availability, book, checkout, my-trips
-- `admin/` dashboard, bookings, payments, manage, photos, guide-payments
-- `tour-guide/` guide portal: dashboard, bookings, availability, places, payments, profile
-- `includes/` header, footer, functions, auth-check, admin layout and actions
-- `config/` database and site settings (BASE_URL is detected automatically)
-- `assets/` css, js, images, uploads/payment-ids
-- `database/` schema.sql, update_guide_destinations.sql
-- `errors/` 403, 404, 500
+Exploreza is a web-based travel and tour guide booking system for destinations in the Philippines. It lets travelers browse destinations and tour packages, check which dates are still available, book one or several tours in a single transaction, choose to have a tour guide, and pay online or in cash. The administrator reviews each booking, assigns an available tour guide, and confirms the payment. Every tour guide has their own account to see their assigned tours, availability, places and payments.
 
-## Photos
-Admin > Photos: upload your own, search free Wikimedia Commons photos, or click Auto-fill. Credits show on the landing page.
+The system replaces manual booking by phone or message with one place where travelers, the tour operator and the tour guides can see the same information.
 
-## Tour guide accounts
-Import `database/update_guide_accounts.sql` once. Then Admin > Manage content > 'Create logins for all guides without one' (temporary password Guide_123), or create a login per guide.
-Guides log in at auth/login.php and land in the guide portal. Only the admin creates guide accounts.
+## Purpose
 
-## Version 2 (map, guide fee, ratings)
-Import `database/update_v2.sql` once (it also creates the guide logins). Guide fee for travelers: GUIDE_FEE_PER_DAY in config/config.php (PHP 1,500 per tour day).
-Maps use Leaflet + OpenStreetMap; addresses are looked up with Nominatim. Travelers rate guides in My trips after the admin marks a tour completed.
+- Make it easy for travelers to find tours and book them online
+- Prevent overbooking by showing which tour dates are full
+- Keep payments and traveler identity checks organized
+- Match each booking with a tour guide who is free and knows the destination
+- Give tour guides their own account for schedules, assigned bookings and pay
 
-## Version 3 (age check)
-Import `database/update_v3.sql` once. Travelers must be 18+ (checked at sign-up and again at booking).
-The package page shows a map with nearby accommodations (OpenStreetMap Overpass API).
+## Who uses it
+
+| User | What they do |
+|---|---|
+| Traveler | Browses destinations and packages, books tours, pays, tracks bookings and rates tour guides |
+| Admin (owner) | Manages content, reviews and approves bookings, assigns guides, verifies payments and pays guides |
+| Tour guide | Logs in to see assigned bookings, set days off, view places covered and see payments and ratings |
+
+## How a booking works
+
+1. A visitor opens the landing page and sees the destinations, packages, tour guides and map. Opening a package requires logging in or signing up.
+2. A new traveler signs up with name, email, contact number, birthdate and a strong password, then verifies the account. Only travelers aged 18 and above can book.
+3. The traveler picks a package, a travel date from the availability calendar, the number of participants and, optionally, a tour guide for an extra fee. The package page shows a map with nearby accommodations.
+4. More packages from other destinations can be added to the same cart, and everything is paid in one transaction.
+5. The traveler reviews the booking and pays by cash, GCash, bank transfer or card. Online payments need a valid ID upload for verification.
+6. The admin reviews the booking, checks the ID and payment, and assigns a tour guide who covers the destination and is free on those dates.
+7. The admin approves the booking, and the traveler and the guide are notified.
+8. After the tour, the admin marks it as completed and the traveler can rate the tour guide.
+
+## Main features
+
+**Traveler side**
+- Landing page, destination and package details with entrance fees, itineraries, inclusions and exclusions
+- Interactive map and nearby accommodations
+- Availability calendar showing open, nearly full and fully booked dates
+- Multiple bookings in one transaction with automatic price calculation
+- Booking history, status tracking, cancellation and printable confirmation
+- Notifications, and a login page that lists previously used accounts
+
+**Admin side**
+- Dashboard with statistics and charts
+- Booking approval, rejection and deletion
+- Guide assignment based on availability, destination and days off
+- Payment and ID verification, and traveler age display
+- Management of destinations, packages, tour guides, guide logins and photos
+- Guide payments
+
+**Tour guide side**
+- Dashboard with upcoming tours and notifications
+- Assigned bookings with traveler details
+- Availability and days off
+- Places covered, payments and profile with ratings and reviews
+
+## Technology
+
+- **Backend:** PHP 8 with PDO
+- **Database:** MySQL / MariaDB, designed in third normal form (3NF)
+- **Frontend:** HTML, CSS and JavaScript, responsive for phones and tablets
+- **Maps and data services:** Leaflet with OpenStreetMap, Overpass API (accommodations), Nominatim (locations), Wikimedia Commons (destination photos)
+
+## Database
+
+Main tables: `users`, `destinations`, `packages`, `guides`, `guide_destinations`, `bookings`, `booking_items`, `payments`, `notifications`, `guide_days_off`, `guide_payments`, `guide_ratings` and `remember_tokens`.
+
+One booking (transaction) can contain many booking items, so a traveler can book different packages for different destinations at once. Each booking has one payment record.
+
+## Scope and limitations
+
+- Covers destinations in the Philippines only
+- Verification codes are shown on screen because no email or SMS service is connected (demo mode)
+- Maps, nearby accommodations and the photo search need an internet connection
+
+## Getting started
+
+1. Install XAMPP and start Apache and MySQL.
+2. Copy the project folder to `C:\xampp\htdocs\exploreza`.
+3. Import `database/schema.sql` in phpMyAdmin.
+4. Open `http://localhost/exploreza/`.
+
+Admin account for demonstration: `admin` / `Admin_123`
