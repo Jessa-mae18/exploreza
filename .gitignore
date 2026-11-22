@@ -1,0 +1,2 @@
+assets/uploads/payment-ids/*
+!assets/uploads/payment-ids/.htaccess

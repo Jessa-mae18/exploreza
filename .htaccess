@@ -1,0 +1,5 @@
+Options -Indexes
+# If you rename the project folder, update the paths below.
+ErrorDocument 403 /exploreza/errors/403.php
+ErrorDocument 404 /exploreza/errors/404.php
+ErrorDocument 500 /exploreza/errors/500.php
