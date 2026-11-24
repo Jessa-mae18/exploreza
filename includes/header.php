@@ -15,8 +15,6 @@ function head($t) {
         BASE_URL .
         'index.php#packages">Packages</a><a href="' .
         BASE_URL .
-        'index.php#map">Map</a><a href="' .
-        BASE_URL .
         'customer/availability.php">Availability</a><a href="' .
         BASE_URL .
         'index.php#guides">Guides</a><a href="' .

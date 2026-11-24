@@ -50,21 +50,6 @@ function link_for($id) {
 </div><?php endforeach; if(!$ds) echo '<p>No destinations match your search.</p>'; ?>
 </div>
 </section>
-<section class="sec" id="map">
-<h2>Explore the Philippines on the map</h2>
-<p class="muted">Click a pin to see the place and open it in OpenStreetMap.</p>
-<?php
-try {
-    $mp = [];
-    foreach (q('SELECT * FROM destinations')->fetchAll() as $d) {
-        $mp[] = map_point($d['name'], $d['region'], $d['latitude'] ?? null, $d['longitude'] ?? null, '<a href="#packages">See tour packages</a>');
-    }
-} catch (Exception $e) {
-    $mp = [];
-}
-render_map($mp, 440, 'homemap');
-?>
-</section>
 <section class="sec w" id="packages">
 <h2>Popular tour packages</h2>
 <div class="grid">
