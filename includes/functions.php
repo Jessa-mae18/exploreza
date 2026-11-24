@@ -20,6 +20,15 @@ function need($role = null) {
         header('Location: ' . BASE_URL . 'auth/login.php');
         exit();
     }
+    // Age double check on every protected page: minors (under 18) are signed out
+    if (me()['role'] == 'user') {
+        $dob = q('SELECT birthdate FROM users WHERE user_id=?', [me()['id']])->fetchColumn();
+        if ($dob && age_from($dob) < 18) {
+            session_destroy();
+            header('Location: ' . BASE_URL . 'auth/login.php?minor=1');
+            exit();
+        }
+    }
     if ($role && me()['role'] !== $role) {
         http_response_code(403);
         require __DIR__ . '/../errors/403.php';

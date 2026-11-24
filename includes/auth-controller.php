@@ -3,6 +3,9 @@
 require_once __DIR__ . '/../config/config.php';
 $err = [];
 $msg = '';
+if (isset($_GET['minor'])) {
+    $err[] = 'Access denied: minors (under 18) are not allowed to use this system.';
+}
 if ($a == 'logout') {
     session_destroy();
     header('Location: ' . BASE_URL . 'index.php');
@@ -32,7 +35,9 @@ if ($a == 'login' && $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['quick
     } catch (Exception $e) {
         $r = null;
     }
-    if (!$r) {
+    if ($r && $r['role'] == 'user' && !empty($r['birthdate']) && age_from($r['birthdate']) < 18) {
+        $err[] = 'Access denied: minors (under 18) are not allowed to use this system.';
+    } elseif (!$r) {
         $err[] = 'This saved account has expired. Please log in with your password.';
     } else {
         $_SESSION['u'] = [
@@ -57,6 +62,8 @@ if ($a == 'login' && $_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['quic
     $r = q('SELECT * FROM users WHERE username=? OR email=?', [$_POST['id'], $_POST['id']])->fetch();
     if (!$r || !password_verify($_POST['pw'], $r['password_hash'])) {
         $err[] = 'Wrong username/email or password.';
+    } elseif ($r['role'] == 'user' && !empty($r['birthdate']) && age_from($r['birthdate']) < 18) {
+        $err[] = 'Access denied: minors (under 18) are not allowed to use this system.';
     } else {
         $_SESSION['u'] = [
             'id' => $r['user_id'],

@@ -110,7 +110,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'SELECT COUNT(*) FROM booking_items WHERE booking_id=? AND want_guide=1 AND guide_id IS NULL',
             [$bid]
         )->fetchColumn();
-        if ($a == 'approve' && $miss) {
+        $pay = q('SELECT status FROM payments WHERE booking_id=?', [$bid])->fetch();
+        if ($a == 'approve' && (!$pay || $pay['status'] != 'verified')) {
+            $_SESSION['flash'] = 'Verify the payment first, then approve the booking.';
+        } elseif ($a == 'approve' && $miss) {
             $_SESSION['flash'] = 'Assign a guide to every requested tour before approving.';
         } elseif (
             $a == 'approve' &&
@@ -149,7 +152,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
     if ($a == 'pay') {
-        q('UPDATE payments SET status=? WHERE booking_id=?', [$_POST['v'], $_POST['b']]);
+        $v = in_array($_POST['v'] ?? '', ['verified', 'rejected']) ? $_POST['v'] : 'pending';
+        q('UPDATE payments SET status=? WHERE booking_id=?', [$v, $_POST['b']]);
+        $bk = q('SELECT user_id,reference_no FROM bookings WHERE booking_id=?', [$_POST['b']])->fetch();
+        if ($bk && $v != 'pending') {
+            notify($bk['user_id'], "Your payment for booking {$bk['reference_no']} was " . ($v == 'verified' ? 'verified.' : 'rejected. Please contact us.'));
+        }
+        $_SESSION['ok'] = 'Payment ' . $v . '.';
     }
     if ($a == 'done') {
         q("UPDATE bookings SET status='completed' WHERE booking_id=?", [$_POST['b']]);

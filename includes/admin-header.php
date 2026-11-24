@@ -24,7 +24,6 @@ $files = [
 $menu = [
     ['dash', 'Dashboard', '&#9638;'],
     ['book', 'Bookings', '&#9776;'],
-    ['pay', 'Payments', '&#8369;'],
     ['manage', 'Manage content', '&#10010;'],
     ['photos', 'Photos', '&#9707;'],
     ['gpay', 'Guide payments', '&#8369;']
